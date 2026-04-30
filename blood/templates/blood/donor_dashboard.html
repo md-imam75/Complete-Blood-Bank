@@ -1,0 +1,178 @@
+{% extends 'blood/base.html' %}
+{% block title %}Donor Dashboard{% endblock %}
+{% block content %}
+<style>
+    :root {
+        --blood-red: #ef233c;
+        --dark-red: #d90429;
+    }
+    body { background-color: #f8f9fa; }
+    
+    .stat-card {
+        border: none;
+        border-radius: 20px;
+        transition: transform 0.3s ease;
+        background: #fff;
+    }
+    .stat-card:hover { transform: translateY(-5px); }
+    
+    .icon-shape {
+        width: 55px;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        margin-bottom: 1rem;
+    }
+    .bg-soft-danger { background: #fff5f5; color: #ef233c; }
+    .bg-soft-success { background: #f0fdf4; color: #16a34a; }
+    .bg-soft-info { background: #f0f9ff; color: #0ea5e9; }
+
+    .rounded-24 { border-radius: 24px; }
+    .history-item {
+        border-left: 4px solid transparent;
+        transition: all 0.2s;
+        padding: 1.25rem;
+    }
+    .history-item:hover { 
+        background: #f8f9fa; 
+        border-left-color: var(--blood-red); 
+    }
+
+    /* Simple & Clean Appeal Card */
+    .emergency-alert {
+        background: #fff;
+        border: 2px solid #ffeded;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row align-items-center mb-5">
+        <div class="col-md-8">
+            <h1 class="fw-800 text-dark mb-1">Hello, {{ user.username }}! 👋</h1>
+            <p class="text-muted">You have helped save up to <b>{{ user.donation_count|default:"0" }} lives</b> so far.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'create_donation_request' %}" class="btn btn-danger btn-lg px-4 rounded-pill fw-bold shadow-sm">
+                <i class="fas fa-plus me-2"></i>Donate Now
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card stat-card shadow-sm p-3">
+                <div class="card-body text-center">
+                    <div class="icon-shape bg-soft-danger mx-auto"><i class="fas fa-heart fa-lg"></i></div>
+                    <h2 class="fw-bold mb-0">{{ user.donation_count|default:"0" }}</h2>
+                    <p class="text-muted mb-0 small text-uppercase fw-bold">Total Donations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card shadow-sm p-3">
+                <div class="card-body text-center">
+                    <div class="icon-shape bg-soft-info mx-auto"><i class="fas fa-tint fa-lg"></i></div>
+                    <h2 class="fw-bold mb-0">{{ user.blood_group|default:"B+" }}</h2>
+                    <p class="text-muted mb-0 small text-uppercase fw-bold">My Blood Group</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card shadow-sm p-3">
+                <div class="card-body text-center">
+                    <div class="icon-shape bg-soft-success mx-auto"><i class="fas fa-calendar-check fa-lg"></i></div>
+                    <h2 class="fw-bold mb-0">Active</h2>
+                    <p class="text-muted mb-0 small text-uppercase fw-bold">Donor Status</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- History (Left Side) -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-24">
+                <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Recent Activity</h5>
+                    <span class="badge bg-light text-muted fw-normal">Latest 5 Records</span>
+                </div>
+                <div class="card-body p-0">
+                    {% for donation in my_donations %}
+                    <div class="history-item d-flex justify-content-between align-items-center border-bottom">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light p-3 rounded-circle me-3">
+                                <i class="fas fa-hospital text-danger"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ donation.blood_bank.name }}</h6>
+                                <small class="text-muted">{{ donation.created_at|date:"D, d M Y" }}</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold {% if donation.status == 'completed' %}text-success{% elif donation.status == 'pending' %}text-warning{% else %}text-danger{% endif %}">
+                                {{ donation.status|title }}
+                            </div>
+                            <span class="badge bg-light text-dark fw-normal">{{ donation.blood_group }} Group</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-5 text-center text-muted">No donation history available.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar (Right Side) -->
+        <div class="col-lg-4">
+            <!-- REAL Urgent Appeal from DB -->
+            <div class="card emergency-alert shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-exclamation-circle text-danger me-2"></i>
+                        <h6 class="fw-bold mb-0">Urgent Appeal</h6>
+                    </div>
+                    
+                    {% if urgent_appeal %}
+                    <div class="bg-light p-3 rounded-15">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge bg-danger rounded-pill">{{ urgent_appeal.blood_group }} Needed</span>
+                            <small class="text-muted">{{ urgent_appeal.created_at|timesince }} ago</small>
+                        </div>
+                        <h6 class="fw-bold mb-1">{{ urgent_appeal.hospital_name }}</h6>
+                        <p class="small text-muted mb-3"><i class="fas fa-map-marker-alt me-1"></i> {{ urgent_appeal.location }}</p>
+                        <a href="tel:{{ urgent_appeal.contact_number }}" class="btn btn-outline-danger btn-sm w-100 rounded-pill fw-bold">
+                            Contact Now
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="text-muted small mb-0">No urgent requests currently.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Nearby Banks -->
+            <div class="card border-0 shadow-sm rounded-24">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-4">Nearby Blood Banks</h6>
+                    {% for bank in available_blood_banks %}
+                    <div class="mb-3 d-flex align-items-center">
+                        <div class="p-2 bg-light rounded-circle me-3">
+                            <i class="fas fa-building text-muted small"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 small fw-bold">{{ bank.name }}</h6>
+                            <p class="small text-muted mb-0">{{ bank.location }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends 'blood/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Register - BloodBank Pro{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --blood-red: #ef233c;
+        --hospital-blue: #0077ff;
+    }
+    .auth-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        padding: 40px 0;
+        background-color: #f8f9fa;
+    }
+    .auth-card {
+        background: white;
+        border-radius: 30px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+    .auth-header {
+        padding: 40px 40px 20px;
+        text-align: center;
+    }
+    .role-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .role-card { position: relative; cursor: pointer; }
+    .role-card input { display: none; }
+    .role-label {
+        display: block;
+        padding: 15px;
+        border: 2px solid #f1f3f5;
+        border-radius: 16px;
+        text-align: center;
+        transition: all 0.3s;
+        background: #f8f9fa;
+    }
+    .role-card input:checked + .role-label {
+        border-color: var(--blood-red);
+        background: #fff;
+        box-shadow: 0 10px 20px rgba(239, 35, 60, 0.1);
+    }
+    .form-control-custom {
+        border: 2px solid #f1f3f5;
+        border-radius: 12px;
+        padding: 12px 16px;
+        transition: all 0.2s;
+        display: block;
+        width: 100%;
+    }
+    .form-control-custom:focus {
+        border-color: var(--blood-red);
+        box-shadow: 0 0 0 4px rgba(239, 35, 60, 0.1);
+        outline: none;
+    }
+    .btn-submit {
+        background: var(--blood-red);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: all 0.3s;
+    }
+    .btn-submit:hover {
+        background: #d90429;
+        transform: translateY(-2px);
+    }
+    .info-box {
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        margin-bottom: 25px;
+        display: none;
+    }
+    .info-box.show { display: flex; align-items: center; }
+    .info-donor { background: #fff5f5; color: var(--blood-red); border-left: 4px solid var(--blood-red); }
+    .info-hospital { background: #f0f7ff; color: var(--hospital-blue); border-left: 4px solid var(--hospital-blue); }
+</style>
+
+<div class="auth-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <div class="mb-2 text-danger"><i class="fas fa-tint fa-3x"></i></div>
+                        <h1 class="fw-800">Create Account</h1>
+                        <p class="text-muted">Join our lifesaving network today.</p>
+                    </div>
+
+                    <div class="px-4 px-md-5 pb-5">
+                        <!-- Role Selector -->
+                        <form method="post" id="registrationForm" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="role-grid">
+                                <label class="role-card">
+                                    <input type="radio" name="role" value="donor" id="donor_role" {% if role != 'hospital' %}checked{% endif %}>
+                                    <div class="role-label">
+                                        <span class="d-block fs-3 mb-1">🙋‍♂️</span>
+                                        <span class="small fw-bold">Donor</span>
+                                    </div>
+                                </label>
+                                <label class="role-card">
+                                    <input type="radio" name="role" value="hospital" id="hospital_role" {% if role == 'hospital' %}checked{% endif %}>
+                                    <div class="role-label">
+                                        <span class="d-block fs-3 mb-1">🏥</span>
+                                        <span class="small fw-bold">Hospital</span>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Contextual Info -->
+                            <div id="donorInfo" class="info-box info-donor {% if role != 'hospital' %}show{% endif %}">
+                                <i class="fas fa-heart me-2"></i> Register to donate blood and track your impact.
+                            </div>
+                            <div id="hospitalInfo" class="info-box info-hospital {% if role == 'hospital' %}show{% endif %}">
+                                <i class="fas fa-microscope me-2"></i> Register to request blood units for patients.
+                            </div>
+
+                            <!-- Dynamic Form Fields -->
+                            <div class="row g-3">
+                                {% for field in form %}
+                                    <div class="col-md-{% if field.name == 'username' or field.name == 'location' %}12{% else %}6{% endif %} mb-2 field-container" id="div_{{ field.name }}">
+                                        <label class="small fw-bold text-uppercase text-muted mb-1">
+                                            {{ field.label }}
+                                        </label>
+                                        {{ field }}
+                                        {% if field.errors %}
+                                            {% for error in field.errors %}
+                                                <small class="text-danger d-block mt-1">{{ error|striptags }}</small>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <button type="submit" class="btn btn-submit w-100 py-3 mt-4 shadow-sm">
+                                Complete Registration <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-4">
+                            <p class="small text-muted">Already a member? <a href="{% url 'login' %}" class="text-danger fw-bold text-decoration-none">Sign in here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const donorRole = document.getElementById('donor_role');
+        const hospitalRole = document.getElementById('hospital_role');
+        const donorInfo = document.getElementById('donorInfo');
+        const hospitalInfo = document.getElementById('hospitalInfo');
+        const form = document.getElementById('registrationForm');
+
+        // Apply custom classes to Django's rendered inputs
+        function styleInputs() {
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type !== 'radio' && input.type !== 'checkbox') {
+                    input.classList.add('form-control-custom');
+                }
+            });
+        }
+
+        function toggleRoleView() {
+            // Check for both possible Django ID patterns for blood group
+            const bloodField = document.getElementById('div_blood_group') || document.querySelector('[id*="blood_group"]').closest('.field-container');
+            
+            if (hospitalRole.checked) {
+                if (bloodField) bloodField.style.display = 'none';
+                donorInfo.classList.remove('show');
+                hospitalInfo.classList.add('show');
+            } else {
+                if (bloodField) bloodField.style.display = 'block';
+                donorInfo.classList.add('show');
+                hospitalInfo.classList.remove('show');
+            }
+        }
+
+        // When radio changes, we actually need to resubmit or reload 
+        // if the fields between the two forms are significantly different.
+        // For simple toggle of one field, we just hide it:
+        donorRole.addEventListener('change', toggleRoleView);
+        hospitalRole.addEventListener('change', toggleRoleView);
+
+        styleInputs();
+        toggleRoleView();
+        const usernameInput = document.querySelector('input[name="username"]');
+
+    if (usernameInput) {
+    usernameInput.addEventListener('input', function() {
+        // Automatically replaces spaces with underscores and removes invalid chars
+        this.value = this.value.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9@./+-_]/g, '');
+    });
+}
+    });
+</script>
+{% endblock %}

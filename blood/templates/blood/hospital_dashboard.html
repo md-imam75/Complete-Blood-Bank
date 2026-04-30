@@ -1,0 +1,143 @@
+{% extends 'blood/base.html' %}
+{% block title %}Hospital Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .glass-card {
+        background: #fff;
+        border-radius: 24px;
+        border: 1px solid #f1f3f5;
+        transition: all 0.3s ease;
+    }
+    .action-gradient {
+        background: linear-gradient(135deg, #ef233c 0%, #d90429 100%);
+        border-radius: 24px;
+        color: white;
+    }
+    .stat-circle {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .request-row {
+        border-left: 4px solid #dee2e6;
+        transition: 0.2s;
+    }
+    .request-row:hover {
+        background: #f8f9fa;
+        border-left-color: #ef233c;
+    }
+    .fw-800 { font-weight: 800; }
+</style>
+
+<div class="container py-4">
+    <div class="row align-items-center mb-5">
+        <div class="col-md-7">
+            <h1 class="fw-800 text-dark mb-1">Hospital Console</h1>
+            <p class="text-muted mb-0"><i class="fas fa-hospital-alt me-2"></i>Logged in as: <strong>{{ user.username|title }}</strong></p>
+        </div>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <span class="badge bg-soft-danger text-danger px-3 py-2 rounded-pill fw-bold">
+                <i class="fas fa-circle me-1 small"></i> System Active
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="glass-card shadow-sm h-100">
+                <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Active Requests</h5>
+                    <a href="#" class="text-danger text-decoration-none small fw-bold">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr class="small text-uppercase text-muted">
+                                    <th class="ps-4 border-0">Blood Group</th>
+                                    <th class="border-0">Units</th>
+                                    <th class="border-0">Bank</th>
+                                    <th class="border-0">Status</th>
+                                    <th class="border-0">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in my_requests %}
+                                <tr class="request-row">
+                                    <td class="ps-4 align-middle">
+                                        <span class="fw-bold text-danger">{{ request.blood_group }}</span>
+                                    </td>
+                                    <td class="align-middle fw-bold">{{ request.units_needed }}</td>
+                                    <td class="align-middle small text-muted">{{ request.blood_bank.name }}</td>
+                                    <td class="align-middle">
+                                        <span class="badge rounded-pill {% if request.status == 'approved' %}bg-success{% elif request.status == 'pending' %}bg-warning text-dark{% else %}bg-danger{% endif %} px-3">
+                                            {{ request.status|title }}
+                                        </span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <button class="btn btn-sm btn-light rounded-circle"><i class="fas fa-ellipsis-v"></i></button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="fas fa-clipboard-list fa-3x mb-3 opacity-25"></i>
+                                        <p>No requests found. Start by creating one!</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       <style>
+    /* Add this to your style block */
+    .btn-white {
+        background-color: #ffffff !important;
+        color: #ef233c !important; /* Matches your red theme */
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-white:hover {
+        background-color: #f8f9fa !important;
+        transform: scale(1.02);
+        color: #d90429 !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="col-lg-4">
+    <div class="action-gradient shadow-lg p-4 mb-4" style="background: linear-gradient(135deg, #ef233c 0%, #d90429 100%); border-radius: 24px; color: white;">
+        <h4 class="fw-800 mb-3">Inventory Low?</h4>
+        <p class="small opacity-75 mb-4">Submit a request to local blood banks to restock your hospital's supply.</p>
+        
+        <a href="{% url 'create_blood_request' %}" class="btn btn-white w-100 py-3 rounded-15 fw-bold shadow">
+            <i class="fas fa-plus-circle me-2"></i>Request Blood
+        </a>
+    </div>
+</div>
+
+            <div class="glass-card shadow-sm p-4">
+    <h6 class="fw-bold mb-3">Resource Links</h6>
+    <div class="d-grid gap-2">
+        <a href="{% url 'search_donors' %}" class="btn btn-outline-dark text-start py-2 rounded-12 small">
+            <i class="fas fa-search me-2 text-danger"></i> Find Nearby Donors
+        </a>
+
+        <a href="{% url 'request_history' %}" class="btn btn-outline-dark text-start py-2 rounded-12 small">
+            <i class="fas fa-file-invoice me-2 text-primary"></i> Request History
+        </a>
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'blood/base.html' %}
+{% block content %}
+<style>
+    :root {
+        --medical-red: #ef233c;
+        --deep-navy: #2b2d42;
+        --soft-gray: #f8f9fa;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(239, 35, 60, 0.1);
+        border-radius: 30px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    }
+
+    .form-floating > .form-control:focus, 
+    .form-floating > .form-select:focus {
+        border-color: var(--medical-red);
+        box-shadow: 0 0 0 0.25 rbg(239, 35, 60, 0.1);
+    }
+
+    .input-group-text {
+        background: transparent;
+        border: none;
+        color: var(--medical-red);
+    }
+
+    .hero-gradient {
+        background: linear-gradient(135deg, #ef233c 0%, #d90429 100%);
+        height: 200px;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+
+    .btn-publish {
+        background: var(--medical-red);
+        color: white;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn-publish:hover {
+        background: var(--deep-navy);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(239, 35, 60, 0.2);
+        color: white;
+    }
+</style>
+
+<div class="hero-gradient"></div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="glass-card p-4 p-md-5 mt-5">
+                
+                <div class="text-center mb-5">
+                    <div class="d-inline-block p-3 rounded-circle mb-3" style="background: rgba(239, 35, 60, 0.1);">
+                        <i class="fas fa-ambulance fa-2x text-danger"></i>
+                    </div>
+                    <h2 class="fw-800 text-dark mb-1">Emergency Broadcast</h2>
+                    <p class="text-muted small">Your post will be instantly visible to all donors and hospitals.</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="patient_name" class="form-control rounded-15" id="id_patient" placeholder="Patient Name" required>
+                                <label for="id_patient"><i class="fas fa-user-injured me-2 text-danger"></i>Patient Full Name</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <select name="blood_group" class="form-select rounded-15" id="id_bg">
+                                    {% for value, label in form.fields.blood_group.choices %}
+                                        <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="id_bg"><i class="fas fa-tint me-2 text-danger"></i>Blood Group</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="disease_name" class="form-control rounded-15" id="id_dis" placeholder="Disease" required>
+                                <label for="id_dis"><i class="fas fa-notes-medical me-2 text-danger"></i>Reason/Disease</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="location" class="form-control rounded-15" id="id_loc" placeholder="Location" required>
+                                <label for="id_loc"><i class="fas fa-map-marker-alt me-2 text-danger"></i>Hospital Name or Area</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3">
+                                <input type="datetime-local" name="needed_by" class="form-control rounded-15" id="id_time" required>
+                                <label for="id_time"><i class="fas fa-clock me-2 text-danger"></i>Requirement Deadline</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3">
+                                <textarea name="description" class="form-control rounded-15" id="id_desc" style="height: 100px" placeholder="Details"></textarea>
+                                <label for="id_desc">Additional Details (Optional)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-publish w-100 py-3 rounded-pill fw-bold text-uppercase tracking-wider">
+                            <i class="fas fa-paper-plane me-2"></i>Post Emergency Now
+                        </button>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'emergency_feed' %}" class="text-muted text-decoration-none small">
+                                <i class="fas fa-chevron-left me-1"></i> Cancel and return to feed
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

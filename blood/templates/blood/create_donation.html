@@ -1,0 +1,40 @@
+{% extends 'blood/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg rounded-24 p-4">
+                <div class="text-center mb-4">
+                    <div class="bg-light d-inline-block p-3 rounded-circle mb-3">
+                        <i class="fas fa-heartbeat fa-2x text-danger"></i>
+                    </div>
+                    <h2 class="fw-800">Schedule Donation</h2>
+                    <p class="text-muted">Choose a location and time to save a life.</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Blood Bank</label>
+                        <select name="blood_bank" class="form-select rounded-12 py-2" required>
+                            <option value="">-- Select Nearby Bank --</option>
+                            {% for bank in banks %}
+                            <option value="{{ bank.id }}">{{ bank.name }} ({{ bank.address }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Preferred Date</label>
+                        <input type="date" name="date" class="form-control rounded-12 py-2" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger w-100 py-3 rounded-pill fw-bold shadow-sm">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Donation Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

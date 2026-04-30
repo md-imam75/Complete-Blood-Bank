@@ -1,0 +1,211 @@
+{% extends 'blood/base.html' %}
+
+{% block content %}
+<style>
+    /* Hero Styling */
+    .hero-wrapper {
+        padding: 100px 0;
+        background: radial-gradient(circle at top right, rgba(239, 35, 60, 0.05), transparent),
+                    radial-gradient(circle at bottom left, rgba(239, 35, 60, 0.05), transparent);
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -2px;
+        margin-bottom: 1.5rem;
+    }
+
+    .text-gradient {
+        background: linear-gradient(45deg, #ef233c, #ff8fa3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Stats Card */
+    .stat-card {
+        background: white;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 24px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #2b2d42;
+    }
+
+    /* Hospital Section */
+    .hospital-section {
+        background: #2b2d42;
+        color: white;
+        padding: 80px 0;
+        border-radius: 40px;
+        margin: 40px 0;
+    }
+
+    .hospital-logo-card {
+        background: rgba(255,255,255,0.05);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #edf2f4;
+        transition: background 0.3s;
+    }
+
+    .hospital-logo-card:hover {
+        background: rgba(255,255,255,0.1);
+    }
+
+    /* Features */
+    .feature-dot {
+        height: 12px;
+        width: 12px;
+        background: var(--primary-red);
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
+<section class="hero-wrapper">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill mb-3 fw-bold">
+                    <i class="fas fa-heart pulse me-2"></i>Every Drop Counts
+                </span>
+                <h1 class="hero-title">Connecting <span class="text-gradient">Life</span> Through Blood.</h1>
+                <p class="lead text-muted mb-4 fs-4" style="max-width: 600px;">
+                    A decentralized network for donors and hospitals. Get real-time stock updates, urgent requests, and save lives with one tap.
+                </p>
+                
+                {% if not user.is_authenticated %}
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg">Become a Donor</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-dark btn-lg rounded-pill px-4">Hospital Login</a>
+                </div>
+                {% else %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary-custom btn-lg">Back to My Dashboard</a>
+                {% endif %}
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <img src="https://www.magnific.com/free-vector/tiny-cardiology-doctor-nurse-examining-heart-blood-pressure-prescribing-treatment-medical-cardiovascular-checkup-flat-vector-illustration-anatomy-hospital-heart-diseases-health-care-concept_21683392.htm#fromView=keyword&page=1&position=0&uuid=7d80a026-ca49-483e-9c66-9bc6470be13e&query=Health+illustration" alt="Health Illustration" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container mb-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="text-danger mb-2 fs-1"><i class="fas fa-users"></i></div>
+                <div class="stat-value">1,240</div>
+                <div class="text-muted fw-bold">Verified Donors</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="text-primary mb-2 fs-1"><i class="fas fa-hospital-user"></i></div>
+                <div class="stat-value">85</div>
+                <div class="text-muted fw-bold">Partner Hospitals</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="text-success mb-2 fs-1"><i class="fas fa-kit-medical"></i></div>
+                <div class="stat-value">3,500+</div>
+                <div class="text-muted fw-bold">Units Delivered</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="hospital-section px-4 shadow-xl">
+        <div class="text-center mb-5">
+            <h2 class="fw-800">Networked Hospitals</h2>
+            <p class="opacity-75">Trustworthy medical centers integrated into our system</p>
+        </div>
+        <div class="row g-3 justify-content-center">
+            <div class="col-6 col-md-3">
+                <div class="hospital-logo-card">
+                    <i class="fas fa-h-square mb-2 fs-3"></i>
+                    <div class="small fw-bold">City General</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="hospital-logo-card">
+                    <i class="fas fa-hospital mb-2 fs-3"></i>
+                    <div class="small fw-bold">Red Cross Intl</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="hospital-logo-card">
+                    <i class="fas fa-house-medical mb-2 fs-3"></i>
+                    <div class="small fw-bold">Metro Health</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="hospital-logo-card">
+                    <i class="fas fa-clinic-medical mb-2 fs-3"></i>
+                    <div class="small fw-bold">Life Care</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h2 class="fw-800 mb-4">Why use our platform?</h2>
+            <div class="mb-4 d-flex align-items-start">
+                <div class="feature-dot mt-2"></div>
+                <div>
+                    <h5 class="fw-bold">Smart Alerts</h5>
+                    <p class="text-muted">Receive a ping only when your specific blood type is needed nearby.</p>
+                </div>
+            </div>
+            <div class="mb-4 d-flex align-items-start">
+                <div class="feature-dot mt-2"></div>
+                <div>
+                    <h5 class="fw-bold">Seamless Tracking</h5>
+                    <p class="text-muted">From donation request to transfusion, track the journey of your contribution.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+             <div class="p-5 bg-white rounded-4 shadow-sm">
+                <h4 class="fw-bold mb-3">Live Stock Snapshot</h4>
+                <p class="small text-muted mb-4">Real-time availability across all banks</p>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>A+ Positive</span>
+                    <span class="badge bg-success">Available</span>
+                </div>
+                <div class="progress mb-3" style="height: 8px;">
+                    <div class="progress-bar bg-danger" style="width: 75%"></div>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>O- Negative</span>
+                    <span class="badge bg-warning text-dark">Critical</span>
+                </div>
+                <div class="progress mb-3" style="height: 8px;">
+                    <div class="progress-bar bg-warning" style="width: 20%"></div>
+                </div>
+             </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
