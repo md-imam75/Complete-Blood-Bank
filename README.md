@@ -13,7 +13,7 @@ Website: https://complete-blood-bank.onrender.com/
 ### Landing Page
 ![Home](screenshots/landing_page_01.png)
 ![Home](screenshots/landing_page_02.png)
-![Home] (screenshots/landing_page_03.png)
+![Home](screenshots/landing_page_03.png)
 
 ### Login
 ![Login View](screenshots/login_page.png)
@@ -31,7 +31,7 @@ Website: https://complete-blood-bank.onrender.com/
 ![Hospital View](screenshots/hospital_pannel.png)
 
 ### Find Donor
-![Find Donors View](screenshots/find_donor.png)
+![Find View](screenshots/find_donors.png)
 
 ### Emergency Feed
 ![Emergency Feed View](screenshots/emergency_feed.png)
